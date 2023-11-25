@@ -27,7 +27,7 @@ jobs:
             - ./vendor
       - run:
           name: "Generate environmnet"
-          command: php artisan env:decrypt --key=${APP_KEY}
+          command: php artisan env:decrypt --key=${ENV_SECRET_KEY}
       - run:
           name: "Build Environment"
           command: |
