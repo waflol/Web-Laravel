@@ -1,44 +1,34 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.4.0
-  php: circleci/php@1.1.0
 
 jobs:
-  install_php:
-    docker:
-      - image: cimg/base:edge
-    steps:
-      - checkout
-      - php/install-php:
-          version: '8.2'
-      - php/install-composer
-      - php/install-packages
   build:
     executor: docker/docker
       # Specify the version you desire here
     steps:
       - checkout
       # Download and cache dependencies
+      - run:
+          name: "Build & Up Docker ENV"
+          command: docker compose up -d --build
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
             - v1-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run:
-          name: "Install Dependencies"
-          command: composer install -n --prefer-dist
-
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
       - run:
           name: "Generate environmnet"
-          command: php artisan env:decrypt --key=${ENV_SECRET_KEY}
+          command: ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY}
       - run:
           name: "Build Environment"
           command: |
+            ./vendor/bin/sail down --volumes
             ./vendor/bin/sail up
 
   check-lint:
