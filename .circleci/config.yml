@@ -44,6 +44,7 @@ jobs:
           command: |
             cp .env.example .env
             ./vendor/bin/sail up -d --build
+            chmod +x artisan
             ./vendor/bin/sail test
             ./vendor/bin/sail pint
       - save_cache:
