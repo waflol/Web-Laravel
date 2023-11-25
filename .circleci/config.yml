@@ -26,10 +26,10 @@ jobs:
       - run:
           name: "Generate environmnet file"
           command: |
-          alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
-          sail up
-          sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
-          sail down --volumes
+            alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+            sail up
+            sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
+            sail down --volumes
 
       - run:
           name: "Run Environment"
