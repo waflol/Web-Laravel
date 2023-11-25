@@ -50,7 +50,7 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      - build:
+      - build
       - check-lint:
           requires:
             - build
