@@ -33,23 +33,22 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker
-      - run:
-          name: Build images of services declared in docker-compose.yml
-          command: ./vendor/bin/sail up -d
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: "Generate environmnet file"
           command: |
+            ./vendor/bin/sail up -d
+            echo ${ENV_SECRET_KEY}
             ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
             ./vendor/bin/sail down --volumes
-
       - run:
           name: "Run Environment"
-          command: ./vendor/bin/sail up
+          command: ./vendor/bin/sail up -d
 
   check-lint:
     docker:
-      - image: cimg/php:8.2.0
+      - image: cimg/php:8.3-browsers
     steps:
       - checkout
       - run:
@@ -58,7 +57,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/php:.0
+      - image: cimg/php:8.3-browsers
     steps:
       - checkout
       - run:
