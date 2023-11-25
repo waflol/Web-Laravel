@@ -1,18 +1,12 @@
 version: 2.1
+orbs:
+  docker: circleci/docker@2.4.0
 
-executors:
-  php-executor:
-    docker:
-      - image: circleci/docker:2.4.0
-      - image: cimg/php:8.3.0
-        environment:
-          ENV_SECRET_KEY: ${ENV_SECRET_KEY}
 
 jobs:
   build:
-    executor: php-executor
+    executor: docker/docker
       # Specify the version you desire here
-
     steps:
       - checkout
       # Download and cache dependencies
@@ -39,7 +33,7 @@ jobs:
             ./vendor/bin/sail up
 
   check-lint:
-    executor: php-executor
+    executor: docker/docker
     steps:
       - checkout
       - run:
@@ -47,7 +41,7 @@ jobs:
           command: ./vendor/bin/sail pint .
 
   test:
-    executor: php-executor
+    executor: docker/docker
     steps:
       - checkout
       - run:
