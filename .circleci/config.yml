@@ -65,10 +65,10 @@ workflows:
   pipeline:
     jobs:
       - install_php
-      - install_composer_packages
+      - install_composer_packages:
           requires:
             - install_php
-      - build
+      - build:
           requires:
             - install_composer_packages
       - check-lint:
@@ -77,7 +77,3 @@ workflows:
       - test:
           requires:
             - build
-
-
-
-
