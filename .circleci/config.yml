@@ -11,10 +11,6 @@ jobs:
       - checkout
       - php/install-php:
           version: '8.2'
-  install_composer_packages:
-    executor: php/default
-    steps:
-      - checkout
       - php/install-composer
       - php/install-packages
   build:
@@ -65,12 +61,9 @@ workflows:
   pipeline:
     jobs:
       - install_php
-      - install_composer_packages:
-          requires:
-            - install_php
       - build:
           requires:
-            - install_composer_packages
+            - install_php
       - check-lint:
           requires:
             - build
