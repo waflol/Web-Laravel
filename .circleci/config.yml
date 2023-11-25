@@ -1,13 +1,18 @@
 version: 2.1
-orbs:
-  docker: circleci/docker@2.1.2
+
+executors:
+  php-executor:
+    docker:
+      - image: cimg/php:8.3.0
+      - image: circleci/docker@2.4.0
+        environment:
+          ENV_SECRET_KEY: ${ENV_SECRET_KEY}
 
 jobs:
   build:
-    description: Setup laravel application and run
-    docker:
+    executor: php-executor
       # Specify the version you desire here
-      - image: cimg/php:8.3.0
+
     steps:
       - checkout
       # Download and cache dependencies
@@ -33,17 +38,18 @@ jobs:
           command: |
             ./vendor/bin/sail up
 
-  # check-lint:
-  #   description: Check convention of repo
-  #   steps:
-  #     - run:
-  #         name: Run Check Convention
-  #         command:
-  #           ./vendor/bin/sail pint .
+  check-lint:
+    executor: php-executor
+    steps:
+      - checkout
+      - run:
+          name: Run Check Convention
+          command: ./vendor/bin/sail pint .
 
   test:
-    description: Check Unit Test
+    executor: php-executor
     steps:
+      - checkout
       - run:
           name: Run Unit Tests
           command: sail test
@@ -52,9 +58,9 @@ workflows:
   pipeline:
     jobs:
       - build
-      # - check-lint:
-      #     requires:
-      #       - build
+      - check-lint:
+          requires:
+            - build
       - test:
           requires:
             - build
