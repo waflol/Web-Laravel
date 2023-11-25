@@ -32,8 +32,7 @@ jobs:
 
       - run:
           name: "Run Environment"
-          command: |
-            ./vendor/bin/sail up
+          command: ./vendor/bin/sail up
 
   check-lint:
     docker:
