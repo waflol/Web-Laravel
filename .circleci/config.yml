@@ -1,9 +1,22 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.4.0
-
+  php: circleci/php@x.y
 
 jobs:
+  install_php:
+    docker:
+      - image: cimg/base:edge
+    steps:
+      - checkout
+      - php/install-php:
+          version: '8.2'
+  install_composer_packages:
+    executor: php/default
+    steps:
+      - checkout
+      - php/install-composer
+      - php/install-packages
   build:
     executor: docker/docker
       # Specify the version you desire here
@@ -51,6 +64,8 @@ jobs:
 workflows:
   pipeline:
     jobs:
+      - install_php
+      - install_composer_packages
       - build
       - check-lint:
           requires:
