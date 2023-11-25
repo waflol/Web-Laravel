@@ -24,9 +24,12 @@ jobs:
           paths:
             - ./vendor
       - run:
+          name: "Set Up Docker"
+          command: |
+            docker-compose up --build
+      - run:
           name: "Generate environmnet file"
           command: |
-            ./vendor/bin/sail up -d
             ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
             ./vendor/bin/sail down --volumes
 
