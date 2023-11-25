@@ -42,19 +42,14 @@ jobs:
             set +o pipefail
             docker load -i /caches/app.tar | true
       - run:
-          name: "Generate environmnet file"
+          name: "Run Environment"
           command: |
             cp .env.example .env
             ./vendor/bin/sail up -d
-            ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
-            ./vendor/bin/sail down --volumes
       - save_cache:
           key: v1-docker-{{ .Branch }}
           paths:
             - /caches/app.tar
-      - run:
-          name: "Run Environment"
-          command: ./vendor/bin/sail up -d
 
   check-lint:
     docker:
