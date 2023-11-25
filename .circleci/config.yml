@@ -58,7 +58,9 @@ jobs:
       - checkout
       - run:
           name: Run Check Convention
-          command: ./vendor/bin/sail pint
+          command: |
+            ls
+            ./vendor/bin/sail pint
 
   test:
     docker:
@@ -67,7 +69,9 @@ jobs:
       - checkout
       - run:
           name: Run Unit Tests
-          command: ./vendor/bin/sail test
+          command: |
+            ls
+            ./vendor/bin/sail test
 
 workflows:
   pipeline:
