@@ -10,6 +10,9 @@ jobs:
       - checkout
       # Download and cache dependencies
       - run:
+          name: "Init Temp ENV"
+          command: cp .env.example .env
+      - run:
           name: "Build & Up Docker ENV"
           command: docker-compose up -d --build
       - restore_cache:
@@ -24,7 +27,7 @@ jobs:
             - ./vendor
       - run:
           name: "Generate environmnet"
-          command: ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY}
+          command: ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
       - run:
           name: "Build Environment"
           command: |
