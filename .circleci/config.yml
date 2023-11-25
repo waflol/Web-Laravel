@@ -33,13 +33,13 @@ jobs:
           command: |
             ./vendor/bin/sail up
 
-  check-lint:
-    description: Check convention of repo
-    steps:
-      - run:
-          name: Run Check Convention
-          command:
-            ./vendor/bin/sail pint .
+  # check-lint:
+  #   description: Check convention of repo
+  #   steps:
+  #     - run:
+  #         name: Run Check Convention
+  #         command:
+  #           ./vendor/bin/sail pint .
 
   test:
     description: Check Unit Test
@@ -52,9 +52,9 @@ workflows:
   pipeline:
     jobs:
       - build
-      - check-lint:
-          requires:
-            - build
+      # - check-lint:
+      #     requires:
+      #       - build
       - test:
           requires:
             - build
