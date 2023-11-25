@@ -67,7 +67,7 @@ jobs:
       - run:
           name: Run Check Convention
           command: |
-            ls
+            ./vendor/bin/sail up -d
             ./vendor/bin/sail pint
 
   test:
@@ -75,16 +75,6 @@ jobs:
       - image: cimg/php:8.3-browsers
     steps:
       - checkout
-      - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
-          command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: true
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
@@ -98,7 +88,7 @@ jobs:
       - run:
           name: Run Unit Tests
           command: |
-            ls
+            ./vendor/bin/sail up -d
             ./vendor/bin/sail test
 
 workflows:
