@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - php/install-php:
-          version: '8.2.13'
+          version: '8.2'
   install_composer_packages:
     executor: php/default
     steps:
