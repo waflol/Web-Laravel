@@ -14,13 +14,12 @@ jobs:
           command: |
             sudo apt update
             sudo apt-get install -y php-cli php-dev php-swoole
-            sudo apt-get install php-pgsql php-sqlite3 php-gd php-imagick
-            sudo apt-get install php-curl php-imap php-mysql php-mbstring
-            sudo apt-get install php-xml php-zip php-bcmath php-soap
-            sudo apt-get install php-intl php-readline php-ldap
-            sudo apt-get install php-msgpack php-igbinary php-redis
-            sudo apt-get install php-memcached php-pcov php-xdebug
-            sudo apt-get update
+            sudo apt-get install -y php-pgsql php-sqlite3 php-gd php-imagick
+            sudo apt-get install -y php-curl php-imap php-mysql php-mbstring
+            sudo apt-get install -y php-xml php-zip php-bcmath php-soap
+            sudo apt-get install -y php-intl php-readline php-ldap
+            sudo apt-get install -y php-msgpack php-igbinary php-redis
+            sudo apt-get install -y php-memcached php-pcov php-xdebug
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
@@ -55,7 +54,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/php:8.2.0
+      - image: cimg/php:.0
     steps:
       - checkout
       - run:
