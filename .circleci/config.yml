@@ -35,13 +35,26 @@ jobs:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - setup_remote_docker:
           docker_layer_caching: true
+      - restore_cache:
+          keys:
+            - v1-docker-{{ .Branch }}
+            - v1-docker-
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
       - run:
           name: "Generate environmnet file"
           command: |
             ./vendor/bin/sail up -d
-            echo ${ENV_SECRET_KEY}
+            chown -R $USER .
             ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
             ./vendor/bin/sail down --volumes
+      - save_cache:
+          key: v1-docker-{{ .Branch }}
+          paths:
+            - /caches/app.tar
       - run:
           name: "Run Environment"
           command: ./vendor/bin/sail up -d
