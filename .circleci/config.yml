@@ -25,7 +25,10 @@ jobs:
             - ./vendor
       - run:
           name: "Generate environmnet file"
-          command: ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
+          command: |
+          ./vendor/bin/sail up
+          ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
+          ./vendor/bin/sail down --volumes
 
       - run:
           name: "Run Environment"
