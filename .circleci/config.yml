@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  docker: circleci/docker@2.4.0
 jobs:
   build:
     docker:
@@ -24,9 +26,17 @@ jobs:
           paths:
             - ./vendor
       - run:
-          name: "Set Up Docker"
+          name: Install Docker Compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
           command: |
-            docker-compose up --build
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - setup_remote_docker
+      - run:
+          name: Build images of services declared in docker-compose.yml
+          command: ./vendor/bin/sail up -d
       - run:
           name: "Generate environmnet file"
           command: |
