@@ -48,7 +48,6 @@ jobs:
           name: "Generate environmnet file"
           command: |
             ./vendor/bin/sail up -d
-            chown -R $USER .
             ./vendor/bin/sail artisan env:decrypt --key=${ENV_SECRET_KEY} --force
             ./vendor/bin/sail down --volumes
       - save_cache:
