@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build-and-test:
     docker:
       - image: cimg/php:8.3-browsers
     steps:
@@ -40,83 +40,24 @@ jobs:
             set +o pipefail
             docker load -i /caches/app.tar | true
       - run:
-          name: "Generate Environment"
+          name: "Run Environment"
           command: |
             cp .env.example .env
+            ./vendor/bin/sail up -d
       - save_cache:
           key: v1-docker-{{ .Branch }}
           paths:
             - /caches/app.tar
-
-  check-lint:
-    docker:
-      - image: cimg/php:8.3-browsers
-    steps:
-      - checkout
-      - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
-          command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - restore_cache:
-          keys:
-            - v1-docker-{{ .Branch }}
-            - v1-docker-
       - run:
           name: Run Check Convention
           command: |
-            ./vendor/bin/sail up -d
             ./vendor/bin/sail pint
-
-  test:
-    docker:
-      - image: cimg/php:8.3-browsers
-    steps:
-      - checkout
       - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
+          name: Run Check Convention
           command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - restore_cache:
-          keys:
-            - v1-docker-{{ .Branch }}
-            - v1-docker-
-      - run:
-          name: Run Unit Tests
-          command: |
-            ./vendor/bin/sail up -d
             ./vendor/bin/sail test
 
 workflows:
   pipeline:
     jobs:
-      - build
-      - check-lint:
-          requires:
-            - build
-      - test:
-          requires:
-            - build
+      - build-and-test
