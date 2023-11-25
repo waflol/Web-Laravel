@@ -11,7 +11,7 @@ jobs:
       # Download and cache dependencies
       - run:
           name: "Build & Up Docker ENV"
-          command: docker compose up -d --build
+          command: docker-compose up -d --build
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
@@ -50,10 +50,7 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      - install_php
       - build:
-          requires:
-            - install_php
       - check-lint:
           requires:
             - build
