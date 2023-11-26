@@ -45,12 +45,25 @@ jobs:
             cp .env.example .env
             chmod +x artisan
             ./vendor/bin/sail up -d --build
+            ./vendor/bin/sail
             ./vendor/bin/sail test
             ./vendor/bin/sail pint
       - save_cache:
           key: v1-docker-{{ .Branch }}
           paths:
             - /caches/app.tar
+      - run:
+          name: "Run Migration"
+          command: |
+            ./vendor/bin/sail artisan migrate
+      - run:
+          name: "Run Unit Test"
+          command: |
+            ./vendor/bin/sail test
+      - run:
+          name: "Check Convention"
+          command: |
+            ./vendor/bin/sail pint
 
 workflows:
   pipeline:
