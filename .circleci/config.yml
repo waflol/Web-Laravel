@@ -24,7 +24,7 @@ jobs:
           name: Mysql database
           command: mysql  -h 127.0.0.1 -u root -e "create database ${MYSQL_DB};"
 
-  build-and-test:
+  build:
     executor: backend-executor
     environment:
       DB_CONNECTION: mysql
@@ -68,8 +68,26 @@ jobs:
           name: "Run Migration"
           command: |
             php artisan migrate
+  test:
+    executor: backend-executor
+    steps:
+      - run:
+          name: "Run Unit Test"
+          command: php artisan test
+  check-lint:
+    executor: backend-executor
+    steps:
+      - run:
+          name: "Run Tool Check Style"
+          command: ./vendor/bin/pint
 
 workflows:
   pipeline:
     jobs:
-      - build-and-test
+      - build
+      - check-lint:
+          requires:
+            - build
+      - test:
+          requires:
+            - build
