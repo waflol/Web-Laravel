@@ -44,10 +44,7 @@ jobs:
           command: |
             cp .env.example .env
             chmod +x artisan
-            ./vendor/bin/sail up -d --build
-            ./vendor/bin/sail
-            ./vendor/bin/sail test
-            ./vendor/bin/sail pint
+            docker-compose up -d --build
       - save_cache:
           key: v1-docker-{{ .Branch }}
           paths:
