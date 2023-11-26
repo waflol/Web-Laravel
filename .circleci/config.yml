@@ -28,8 +28,8 @@ jobs:
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
     steps:
-      - browser-tools/install-browser-tools
       - checkout
+      - browser-tools/install-browser-tools
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -73,16 +73,14 @@ jobs:
             mkdir -p ~/phpunit
             php artisan test --log-junit ~/phpunit/junit.xml
       - run:
-          name: "Run tests"
-          command: |
-            mkdir -p ~/reports
-            phpdbg -qrr vendor/bin/phpunit --coverage-html ~/reports
+          name: "Generate Coverage Report"
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
           environment:
             XDEBUG_MODE: coverage
       - store_test_results:
           path: ~/phpunit
       - store_artifacts:
-          path: ~/reports
+          path: build/coverage-report
 workflows:
   pipeline:
     jobs:
