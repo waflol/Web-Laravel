@@ -74,7 +74,7 @@ jobs:
             php artisan test --log-junit ~/phpunit/junit.xml
       - run:
           name: "Generate Coverage Report"
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-xml build/coverage-report
           environment:
             XDEBUG_MODE: coverage
       - store_test_results:
