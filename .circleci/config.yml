@@ -62,12 +62,11 @@ jobs:
           name: "Run Migration"
           command: php artisan migrate
       - run:
-          name: "Run Unit Test"
-          command: php artisan test
-      - run:
           name: "Run Tool Check Style"
           command: ./vendor/bin/pint
-
+      - run:
+          name: "Run Unit Test"
+          command: php artisan test
 workflows:
   pipeline:
     jobs:
