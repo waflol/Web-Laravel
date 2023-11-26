@@ -73,13 +73,17 @@ jobs:
     steps:
       - run:
           name: "Run Unit Test"
-          command: php artisan test
+          command: |
+            ls
+            php artisan test
   check-lint:
     executor: backend-executor
     steps:
       - run:
           name: "Run Tool Check Style"
-          command: ./vendor/bin/pint
+          command: |
+            ls
+            ./vendor/bin/pint
 
 workflows:
   pipeline:
