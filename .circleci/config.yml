@@ -41,7 +41,7 @@ jobs:
       - run:
           name: "Install dependencies"
           command: |
-            sudo apt-get install -y php8.2-xdebug
+            sudo -E install-php-extensions xsl xdebug
             sudo docker-php-ext-enable xdebug
             composer install --dev --ignore-platform-reqs
             npm install
