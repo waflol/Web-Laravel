@@ -73,12 +73,12 @@ jobs:
             mkdir -p ~/phpunit
             php artisan test --log-junit ~/phpunit/junit.xml
       - run:
-          name: "Generate Coverage File"
+          name: "Run tests"
           command: |
             mkdir -p ~/reports
-            sudo pecl channel-update pecl.php.net
-            sudo pecl install xdebug && sudo docker-php-ext-enable xdebug
-            ./vendor/bin/phpunit --coverage-html ~/reports
+            phpdbg -qrr vendor/bin/phpunit --coverage-html ~/reports
+          environment:
+            XDEBUG_MODE: coverage
       - store_test_results:
           path: ~/phpunit
       - store_artifacts:
