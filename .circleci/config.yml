@@ -89,7 +89,7 @@ jobs:
           name: "Generate Coverage Report"
           command: |
             mkdir -p ~/coverage-report
-            vendor/bin/phpunit --coverage-html ~/coverage-report
+            phpdbg -qrr vendor/bin/phpunit --coverage-html ~/coverage-report
 
       - store_test_results:
           path: ~/phpunit
