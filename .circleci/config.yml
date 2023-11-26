@@ -42,7 +42,7 @@ jobs:
           name: "Install dependencies"
           command: |
             sudo apt-get update
-            sudo apt-get install libxslt1-dev
+            sudo apt-get install libxslt1-dev php-xdebug
             sudo -E install-php-extensions xsl xdebug
             sudo docker-php-ext-enable xdebug
             php -i | grep xdebug
@@ -77,14 +77,16 @@ jobs:
           name: "Run Unit Test"
           command: |
             mkdir -p ~/phpunit
-            php artisan test --log-junit ~/phpunit/junit.xml
+            php artisan test --coverage --log-junit ~/phpunit
       - run:
           name: "Generate Coverage Report"
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-html build/coverage-report
+          command: |
+            mkdir -p ~/coverage-report
+            vendor/bin/phpunit --coverage-html ~/coverage-report
       - store_test_results:
           path: ~/phpunit
       - store_artifacts:
-          path: build/coverage-report
+          path: ~/coverage-report
 workflows:
   pipeline:
     jobs:
