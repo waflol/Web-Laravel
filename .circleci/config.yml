@@ -1,8 +1,40 @@
 version: 2.1
-jobs:
-  build-and-test:
+
+executors:
+  backend-executor:
     docker:
       - image: cimg/php:8.3-browsers
+      - image: cimg/redis:7.2
+      - image: cimg/mysql:8.0
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda
+        environment:
+          MYSQL_USER: root
+          MYSQL_DB: test_db
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+
+jobs:
+  init-database:
+    executor: backend-executor
+    steps:
+      - checkout
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo docker-php-ext-install zip
+      - run: sudo composer self-update
+      - run:
+          name: Mysql database
+          command: mysql  -h 127.0.0.1 -u root -e "create database ${MYSQL_DB};"
+
+  build-and-test:
+    executor: backend-executor
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: test_db
+      DB_USERNAME: root
+      REDIS_HOST: 127.0.0.1
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
     steps:
       - checkout
       # Download and cache dependencies
@@ -14,53 +46,27 @@ jobs:
             - v1-dependencies-
       - run:
           name: "Install dependencies"
-          command: composer install -n --prefer-dist
+          command: composer install --dev --ignore-platform-reqs
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
       - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
-          command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - restore_cache:
-          keys:
-            - v1-docker-{{ .Branch }}
-            - v1-docker-
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/app.tar | true
-      - run:
-          name: "Run Environment"
+          name: "Set up Environment"
           command: |
             cp .env.example .env
-            chmod +x artisan
-            docker-compose up -d --build
-      - save_cache:
-          key: v1-docker-{{ .Branch }}
-          paths:
-            - /caches/app.tar
+            php artisan key:generate
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: Waiting for Redis primary to be ready
+          command: dockerize -wait tcp://localhost:6379 -timeout 1m
       - run:
           name: "Run Migration"
           command: |
-            ./vendor/bin/sail artisan migrate
-      - run:
-          name: "Run Unit Test"
-          command: |
-            ./vendor/bin/sail test
-      - run:
-          name: "Check Convention"
-          command: |
-            ./vendor/bin/sail pint
+            php artisan migrate
 
 workflows:
   pipeline:
