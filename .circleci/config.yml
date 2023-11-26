@@ -69,11 +69,11 @@ jobs:
           command: ./vendor/bin/pint
       - run:
           name: "Run Unit Test"
-          command: php artisan test
+          command: |
+            mkdir -p ~/phpunit
+            php artisan test --log-junit ~/phpunit/junit.xml
       - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: htmlcov
+          path: ~/phpunit
 workflows:
   pipeline:
     jobs:
