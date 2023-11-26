@@ -76,6 +76,7 @@ jobs:
           name: "Generate Coverage File"
           command: |
             mkdir -p ~/reports
+            php -i | grep xdebug
             ./vendor/bin/phpunit --coverage-html ~/reports
       - store_test_results:
           path: ~/phpunit
