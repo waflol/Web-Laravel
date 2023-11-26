@@ -28,6 +28,7 @@ jobs:
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
       SAIL_XDEBUG_MODE: develop,debug,coverage
+      XDEBUG_MODE: develop,debug,coverage
     steps:
       - checkout
       - browser-tools/install-browser-tools
