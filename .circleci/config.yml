@@ -42,7 +42,6 @@ jobs:
           command: |
             composer install --dev --ignore-platform-reqs
             npm install
-            npm run build
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
