@@ -27,6 +27,7 @@ jobs:
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       # Download and cache dependencies
       - restore_cache:
@@ -40,6 +41,7 @@ jobs:
           command: |
             composer install --dev --ignore-platform-reqs
             npm install
+            npm run build
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
@@ -67,6 +69,10 @@ jobs:
       - run:
           name: "Run Unit Test"
           command: php artisan test
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov
 workflows:
   pipeline:
     jobs:
