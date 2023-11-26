@@ -41,6 +41,7 @@ jobs:
       - run:
           name: "Install dependencies"
           command: |
+            php -v
             sudo apt-get update
             mkdir -p /etc/apt/keyrings
             sudo apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 dnsutils librsvg2-bin fswatch
