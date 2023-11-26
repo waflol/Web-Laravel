@@ -42,7 +42,7 @@ jobs:
           name: "Install dependencies"
           command: |
             sudo apt-get update
-            sudo apt-get install libxslt1-dev php-xdebug
+            sudo apt-get install libxslt1-dev php-xdebug php-pcov
             sudo pecl install pcov
             sudo -E install-php-extensions xsl xdebug
             sudo docker-php-ext-enable xdebug
