@@ -78,6 +78,7 @@ jobs:
           command: |
             sudo -E install-php-extensions xsl xdebug
             sudo docker-php-ext-enable xdebug
+            php -i | grep xdebug
             phpdbg -qrr vendor/bin/phpunit --coverage-xml build/coverage-report
       - store_test_results:
           path: ~/phpunit
