@@ -71,8 +71,15 @@ jobs:
           command: |
             mkdir -p ~/phpunit
             php artisan test --log-junit ~/phpunit/junit.xml
+      - run:
+          name: "Generate Coverage File"
+          command: |
+            mkdir -p ~/reports
+            ./vendor/bin/phpunit --coverage-html ~/reports
       - store_test_results:
           path: ~/phpunit
+      - store_artifacts:
+          path: ~/reports
 workflows:
   pipeline:
     jobs:
