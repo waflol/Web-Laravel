@@ -27,6 +27,7 @@ jobs:
       REDIS_HOST: 127.0.0.1
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
+      XDEBUG_MODE: coverage
     steps:
       - checkout
       - browser-tools/install-browser-tools
@@ -75,8 +76,6 @@ jobs:
       - run:
           name: "Generate Coverage Report"
           command: phpdbg -qrr vendor/bin/phpunit --coverage-xml build/coverage-report
-          environment:
-            XDEBUG_MODE: coverage
       - store_test_results:
           path: ~/phpunit
       - store_artifacts:
