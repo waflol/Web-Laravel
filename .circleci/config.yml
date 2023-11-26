@@ -84,7 +84,7 @@ jobs:
           name: "Run Unit Test"
           command: |
             mkdir -p ~/phpunit
-            php artisan test --coverage --log-junit ~/phpunit
+            php artisan test --log-junit ~/phpunit
       - run:
           name: "Generate Coverage Report"
           command: |
