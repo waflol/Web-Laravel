@@ -13,18 +13,7 @@ executors:
           MYSQL_PASSWORD: passw0rd
 
 jobs:
-  init-database:
-    executor: backend-executor
-    steps:
-      - checkout
-      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
-      - run: sudo docker-php-ext-install zip
-      - run: sudo composer self-update
-      - run:
-          name: Mysql database
-          command: mysql  -h 127.0.0.1 -u root -e "create database ${MYSQL_DB};"
-
-  build:
+  build-and-test:
     executor: backend-executor
     environment:
       DB_CONNECTION: mysql
@@ -66,32 +55,15 @@ jobs:
           command: dockerize -wait tcp://localhost:6379 -timeout 1m
       - run:
           name: "Run Migration"
-          command: |
-            php artisan migrate
-  test:
-    executor: backend-executor
-    steps:
+          command: php artisan migrate
       - run:
           name: "Run Unit Test"
-          command: |
-            ls
-            php artisan test
-  check-lint:
-    executor: backend-executor
-    steps:
+          command: php artisan test
       - run:
           name: "Run Tool Check Style"
-          command: |
-            ls
-            ./vendor/bin/pint
+          command: ./vendor/bin/pint
 
 workflows:
   pipeline:
     jobs:
-      - build
-      - check-lint:
-          requires:
-            - build
-      - test:
-          requires:
-            - build
+      - build-and-test
